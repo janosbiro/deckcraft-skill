@@ -10,6 +10,10 @@ const CONTRACTS = Object.freeze({
   matrix: { table: [0, 0.02, 1, 0.84] },
   quote: { quote: [0.05, 0.14, 0.88, 0.48], source: [0.05, 0.71, 0.7, 0.13] },
   close: { main: [0, 0.08, 0.84, 0.36], action: [0, 0.57, 0.84, 0.22] },
+  'system-map': { core: [0.35, 0.34, 0.30, 0.29], northWest: [0, 0.04, 0.29, 0.27], northEast: [0.71, 0.04, 0.29, 0.27], southWest: [0, 0.69, 0.29, 0.27], southEast: [0.71, 0.69, 0.29, 0.27] },
+  'evidence-map': { areas: [0, 0.04, 1, 0.62], takeaway: [0, 0.73, 1, 0.20] },
+  'phased-plan': { rows: [0, 0.04, 1, 0.88] },
+  'capability-stack': { spine: [0, 0.06, 0.29, 0.86], bands: [0.37, 0.04, 0.63, 0.90] },
 });
 
 export const SUPPORTED_LAYOUTS = Object.freeze(Object.keys(CONTRACTS));

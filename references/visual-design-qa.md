@@ -11,6 +11,9 @@ Use these defaults for a new deck. A supplied template, brand system, audience, 
 5. **Honest diagrams:** arrows encode direction, sequence, or causality; use grouping, alignment, or enclosure for simultaneous capabilities. Connectors attach to shape boundaries, do not cross labels, and sit behind nodes when appropriate. Every color, badge, and marker has a stable meaning or is removed.
 6. **Useful contrast:** aim for at least 4.5:1 for ordinary text and 3:1 for large text and essential diagram lines. Muted footnotes must remain readable in the actual render. Do not rely on color alone for a distinction.
 7. **Editable evidence:** data charts, tables, labels, and bullets remain native PPTX objects. Do not replace evidence with decorative boxes or rasterized text.
+8. **No internal labels:** `role` and `claim` are planning metadata. Never expose `TITLE`, `ARGUMENT`, `EVIDENCE`, or similar role words as automatic slide chrome. A visible eyebrow must be intentional audience-facing copy.
+9. **Relational alignment:** labels belong to the marker, node, or data point they explain. Check both their bounding-box center and the actual paragraph alignment. Grouping alone does not prove visual alignment.
+10. **Truthful format:** a timeline must express time or dependency; a conceptual taxonomy must not masquerade as a measured chart. Put a meaningful source and caveat on an evidence slide rather than only in speaker notes.
 
 ## Per-slide QA decision
 
@@ -20,6 +23,7 @@ For each slide selected for review, open its actual PNG in the agent's image-vie
 - **Readability:** can title, key evidence, diagram labels, and caveats be read at presentation distance?
 - **Font fidelity:** did LibreOffice substitute the intended typeface or change wrapping, weight, or hierarchy compared with the preview?
 - **Meaning:** does the diagram/chart show the relationship claimed by the title and copy? Are arrows and colors semantically correct?
+- **Choice:** is this the right visual grammar for the content, or was it selected merely because the template exists?
 - **Hierarchy:** one focal point and a clear reading order, without redundant callout bars or unneeded cards?
 
 Record `PASS` or `FIX` with the slide number and one concrete reason. A hard error from text or geometry QA is `FIX`; a clean automated report is not automatically `PASS`. Fix the slide, regenerate its preview, and inspect it again. If the visual decision is uncertain, mark it for human review rather than silently shipping it.
@@ -33,4 +37,4 @@ Record `PASS` or `FIX` with the slide number and one concrete reason. A hard err
 
 Use a fresh output directory for each selected-preview run. The scripts reject stale PNGs from unselected slides in the same directory. `--slides 3,5-6` is 1-based and accepts individual slide numbers or ranges. The text-layout audit may still compute across the deck internally, but only selected findings and images are returned; the token-heavy visual review stays scoped.
 
-The automated geometry check currently detects top-level connectors crossing text frames. It does not understand nested groups, panel ownership, or whether a diagram's meaning is correct. The per-slide visual decision is still required.
+The automated geometry check detects top-level connectors crossing text frames, accidentally visible internal role shapes, and Deckcraft timeline labels whose frame or paragraph is off-center from the marker. It does not understand arbitrary nested groups, panel ownership, clipped first glyphs, or whether a diagram's meaning is correct. The per-slide visual decision is still required. If a title appears to lose a character, compare its rendered PNG with its IR/PPTX text; a clean text-layout JSON is not proof that every glyph painted correctly.

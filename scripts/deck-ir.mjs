@@ -2,7 +2,7 @@ import { resolveDesign, contrastRatio } from './design-system.mjs';
 import { SUPPORTED_LAYOUTS, SUPPORTED_VARIANTS } from './layout-contracts.mjs';
 
 const ROLES = new Set(['title', 'context', 'argument', 'evidence', 'comparison', 'process', 'decision', 'appendix']);
-const TYPES = new Set(['text', 'table', 'chart', 'image', 'comparison', 'timeline', 'bullets']);
+const TYPES = new Set(['text', 'table', 'chart', 'image', 'comparison', 'timeline', 'bullets', 'system', 'evidence', 'phases', 'capabilities']);
 const TEXT_STYLES = new Set(['title', 'body', 'label', 'metric', 'quote', 'attribution', 'action']);
 
 export function validateDeck(deck) {
@@ -37,6 +37,9 @@ export function validateDeck(deck) {
     need(slide.claim, `${path}.claim`);
     if (typeof slide.claim === 'string' && slide.claim.length > 220) errors.push(`${path}.claim is too long`);
     if (!ROLES.has(slide.role)) errors.push(`${path}.role is unsupported`);
+    if (slide.eyebrow !== undefined && (typeof slide.eyebrow !== 'string' || !slide.eyebrow.trim() || slide.eyebrow.length > 60)) {
+      errors.push(`${path}.eyebrow must be a short, non-empty reader-facing label`);
+    }
     if (slide.templateSlide !== undefined) {
       if (!deck.template?.source) errors.push(`${path}.templateSlide needs template.source`);
       if (!Number.isInteger(slide.templateSlide) || slide.templateSlide < 1) errors.push(`${path}.templateSlide must be a 1-based integer`);
@@ -92,6 +95,7 @@ export function validateDeck(deck) {
       }
       if (element.type === 'timeline') {
         if (!Array.isArray(element.steps) || element.steps.length < 3 || element.steps.length > 5) errors.push(`${ep}.steps needs 3–5 entries`);
+        if (!['time', 'ordered'].includes(element.relation)) errors.push(`${ep}.relation must be time or ordered; parallel capabilities belong in system-map`);
         for (const [k, step] of (element.steps ?? []).entries()) {
           need(step.label, `${ep}.steps[${k}].label`);
           need(step.detail, `${ep}.steps[${k}].detail`);
@@ -103,12 +107,49 @@ export function validateDeck(deck) {
           errors.push(`${ep}.items needs 2–5 concise strings`);
         }
       }
+      if (element.type === 'system') {
+        need(element.core?.label, `${ep}.core.label`);
+        need(element.core?.detail, `${ep}.core.detail`);
+        if (!Array.isArray(element.nodes) || element.nodes.length !== 4) errors.push(`${ep}.system needs exactly four surrounding nodes`);
+        for (const [k, node] of (element.nodes ?? []).entries()) {
+          need(node?.label, `${ep}.nodes[${k}].label`);
+          need(node?.detail, `${ep}.nodes[${k}].detail`);
+        }
+      }
+      if (element.type === 'evidence') {
+        if (!Array.isArray(element.areas) || element.areas.length < 3 || element.areas.length > 4) errors.push(`${ep}.evidence needs 3–4 areas`);
+        for (const [k, area] of (element.areas ?? []).entries()) {
+          need(area?.label, `${ep}.areas[${k}].label`);
+          need(area?.detail, `${ep}.areas[${k}].detail`);
+        }
+        need(element.takeaway, `${ep}.takeaway`);
+        need(element.source, `${ep}.source`);
+      }
+      if (element.type === 'phases') {
+        if (!Array.isArray(element.steps) || element.steps.length < 3 || element.steps.length > 4) errors.push(`${ep}.phases needs 3–4 steps`);
+        for (const [k, step] of (element.steps ?? []).entries()) {
+          need(step?.label, `${ep}.steps[${k}].label`);
+          need(step?.detail, `${ep}.steps[${k}].detail`);
+          need(step?.gate, `${ep}.steps[${k}].gate`);
+        }
+      }
+      if (element.type === 'capabilities') {
+        need(element.spine?.label, `${ep}.spine.label`);
+        need(element.spine?.detail, `${ep}.spine.detail`);
+        if (!Array.isArray(element.layers) || element.layers.length !== 4) errors.push(`${ep}.capabilities needs exactly four layers`);
+        for (const [k, layer] of (element.layers ?? []).entries()) {
+          need(layer?.label, `${ep}.layers[${k}].label`);
+          need(layer?.detail, `${ep}.layers[${k}].detail`);
+        }
+      }
     }
     const first = (type, style) => elements.find((e) => e && e.type === type && (!style || e.style === style));
     if (!first('text', 'title')) errors.push(`${path} needs a title text element`);
     const required = {
       proof: [['chart']], comparison: [['comparison']],
       timeline: [['timeline']], matrix: [['table']], quote: [['text', 'quote'], ['text', 'attribution']], close: [['text', 'action']],
+      'system-map': [['system']], 'evidence-map': [['evidence']], 'phased-plan': [['phases']],
+      'capability-stack': [['capabilities']],
     }[slide.layout] ?? [];
     for (const [type, style] of required) if (!first(type, style)) errors.push(`${path} needs ${style ?? type} for ${slide.layout}`);
     if (slide.layout === 'split') {
@@ -123,12 +164,16 @@ export function validateDeck(deck) {
       hero: new Set(['text']), split: new Set(['text', 'bullets', 'chart', 'table', 'image']), proof: new Set(['text', 'chart']),
       comparison: new Set(['text', 'comparison']), timeline: new Set(['text', 'timeline']),
       matrix: new Set(['text', 'table']), quote: new Set(['text']), close: new Set(['text']),
+      'system-map': new Set(['text', 'system']), 'evidence-map': new Set(['text', 'evidence']), 'phased-plan': new Set(['text', 'phases']),
+      'capability-stack': new Set(['text', 'capabilities']),
     }[slide.layout];
     if (allowedForLayout) for (const e of elements) if (e && !allowedForLayout.has(e.type)) errors.push(`${path} ${e.type} is not rendered by ${slide.layout}`);
     const allowedStyles = {
       hero: ['title', 'body'], split: ['title', 'body', 'metric', 'label'], proof: ['title', 'body'],
       comparison: ['title'], timeline: ['title'], matrix: ['title'],
       quote: ['title', 'quote', 'attribution'], close: ['title', 'action'],
+      'system-map': ['title'], 'evidence-map': ['title'], 'phased-plan': ['title'],
+      'capability-stack': ['title'],
     }[slide.layout];
     if (allowedStyles) for (const e of elements) {
       if (e?.type === 'text' && !allowedStyles.includes(e.style)) errors.push(`${path} text style ${e.style} is not rendered by ${slide.layout}`);

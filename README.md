@@ -49,7 +49,9 @@ npm run build:enterprise
 npm run preview:enterprise
 ```
 
-The slide patterns are intentionally bounded: `hero`, `split`, `proof`, `comparison`, `timeline`, `matrix`, `quote`, and `close`. They generate editable native text, charts, tables, lines, and grouped timeline components. `image` is accepted only as a supporting photo/illustration/texture on a `split` slide; do not use it to rasterize chart or text content. A clean automated report is not a visual pass: inspect every new slide's PNG, then compare the current PPTX with a LibreOffice render before delivery.
+To exercise the four additional editable compositions, run `npm run build:architecture` and `npm run preview:architecture` and inspect the resulting images under ignored `artifacts/`.
+
+The twelve bounded slide patterns include `system-map` for trust boundaries, `evidence-map` for sourced qualitative taxonomies, `phased-plan` for gated rollout steps, and `capability-stack` for reusable platform controls alongside the original eight. Choose by meaning, not by cycling through patterns. They generate editable native text, charts, tables, lines, and grouped diagrams. `role` is never printed; optional `eyebrow` is for intentional reader-facing copy. `timeline` requires a true `time` or `ordered` relation. `image` is accepted only as a supporting photo/illustration/texture on a `split` slide; do not use it to rasterize chart or text content. A clean automated report is not a visual pass: inspect every new slide's PNG, then compare the current PPTX with a LibreOffice render before delivery.
 
 For an existing branded deck, `template.source` may point to a local `.pptx`; a slide with `templateSlide` (1-based) duplicates that slide and fills `{{token}}` fields from `fields`. The source slide's native structure, master and styling are preserved. Clone/fill and newly authored slides may be mixed in one deck. Tokens must each occur within a single text run; missing tokens fail loudly. The included renderer does not yet infer arbitrary editable regions or reproduce the upstream projects' full template libraries.
 
@@ -72,7 +74,7 @@ The first command writes only slide 2's SVG/PNG plus selected-slide text and geo
 5. For a new deck, render and inspect every slide and the complete sequence. After a local edit, render and inspect only changed slides with `--slides`; expand the scope when shared design inputs change.
 6. Export the current PPTX with LibreOffice, compare the edited slides (or the full deck at first baseline), and inspect the selected pairs. Report any preview/Office differences or unsupported objects.
 
-The included renderer implements all eight layouts in [the layout grammar reference](references/layout-grammars.md). It is a tested foundation, not a guarantee that arbitrary source material will look polished without review. The preview package is a fast approximation, so final visual QA still matters, especially for branded templates and fonts not installed on the host.
+The included renderer implements all twelve layouts in [the layout grammar reference](references/layout-grammars.md). It is a tested foundation, not a guarantee that arbitrary source material will look polished without review. The preview package is a fast approximation, so final visual QA still matters, especially for branded templates and fonts not installed on the host.
 
 ## Repository policy
 

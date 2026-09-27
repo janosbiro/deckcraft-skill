@@ -10,6 +10,7 @@ import {
   pt,
   setShapeFill,
   setShapeNoStroke,
+  setShapeAlignment,
   setShapeBulletStyle,
   setShapeStroke,
   setShapeTextFormat,
@@ -18,10 +19,11 @@ import {
 
 const emuBox = (box) => Object.fromEntries(Object.entries(box).map(([key, value]) => [key, inches(value)]));
 
-export function addText(slide, text, box, { size, font, color, bold = false, italic = false, name = 'text' }) {
+export function addText(slide, text, box, { size, font, color, bold = false, italic = false, align = 'left', insetLeft = 0, name = 'text' }) {
   const shape = addSlideTextBox(slide, { ...emuBox(box), text: String(text), name });
   setShapeTextFormat(shape, { size, font, color, bold, italic });
-  setShapeTextMargins(shape, { left: 0, right: 0, top: 0, bottom: 0 });
+  setShapeTextMargins(shape, { left: inches(insetLeft), right: 0, top: 0, bottom: 0 });
+  setShapeAlignment(shape, align);
   return shape;
 }
 
@@ -42,12 +44,12 @@ export function addBulletList(slide, items, box, design, name = 'bullet-list') {
   return shape;
 }
 
-export function addHeader(slide, title, role, design, number, total, deckTitle) {
+export function addHeader(slide, title, design, number, total, deckTitle, eyebrow) {
   const { colors: c, fonts: f, layout: l, type: t } = design;
-  addText(slide, role.toUpperCase(), { x: l.margin, y: 0.26, w: 5, h: 0.34 },
-    { size: t.footnote, font: f.sans, color: c.muted, bold: true, name: 'slide-role' });
-  addText(slide, title, { x: l.margin, y: 0.61, w: l.width - 2 * l.margin, h: 0.7 },
-    { size: t.title, font: f.sans, color: c.ink, bold: true, name: 'slide-title' });
+  if (eyebrow) addText(slide, eyebrow, { x: l.margin, y: 0.26, w: 8, h: 0.34 },
+    { size: t.footnote, font: f.sans, color: c.muted, bold: true, name: 'slide-eyebrow' });
+  addText(slide, title, { x: l.margin - 0.08, y: 0.61, w: l.width - 2 * l.margin + 0.08, h: 0.7 },
+    { size: t.title, font: f.sans, color: c.ink, bold: true, insetLeft: 0.08, name: 'slide-title' });
   addRule(slide, l.margin, 1.42, l.width - l.margin, 1.42, c.line, 1, 'header-rule');
   addRule(slide, l.margin, 1.42, l.margin + 1.05, 1.42, c.accent, 3, 'header-accent');
   addText(slide, deckTitle, { x: l.margin, y: l.height - 0.37, w: 7.8, h: 0.28 },

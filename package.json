@@ -11,6 +11,8 @@
     "preview:example": "node scripts/render-preview.mjs artifacts/example.pptx artifacts/preview",
     "build:enterprise": "node scripts/build-deck.mjs examples/enterprise-deck.json artifacts/enterprise.pptx",
     "preview:enterprise": "node scripts/render-preview.mjs artifacts/enterprise.pptx artifacts/preview-enterprise",
+    "build:architecture": "node scripts/build-deck.mjs examples/architecture-deck.json artifacts/architecture.pptx",
+    "preview:architecture": "node scripts/render-preview.mjs artifacts/architecture.pptx artifacts/preview-architecture",
     "qa:lo": "node scripts/qa-libreoffice.mjs artifacts/example.pptx artifacts/final",
     "qa:compare": "node scripts/compare-renders.mjs artifacts/preview artifacts/final/example.pdf artifacts/comparison",
     "test": "node --test tests/*.test.mjs"

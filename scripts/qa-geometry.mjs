@@ -1,7 +1,35 @@
 import {
-  getShapeBoundsResolved, getShapeFlip, getShapeKind, getShapeName,
-  getShapeText, getSlideShapes,
+  findShapeByName, getParagraphAlignment, getShapeBoundsResolved,
+  getShapeFlip, getShapeKind, getShapeName, getShapeText, getSlideShapes,
 } from '@office-kit/pptx/node';
+
+const EMU_PER_INCH = 914400;
+
+export function detectDeckcraftSemantics(pres, slide, slideIndex) {
+  const issues = [];
+  for (const legacyName of ['slide-role', 'hero-role']) {
+    if (findShapeByName(slide, legacyName)) issues.push({
+      slideIndex, kind: 'internal-role-visible', severity: 'error', shape: legacyName,
+    });
+  }
+  for (let number = 1; number <= 5; number += 1) {
+    const marker = findShapeByName(slide, `milestone-${number}`);
+    if (!marker) continue;
+    const markerBox = getShapeBoundsResolved(pres, marker);
+    for (const kind of ['label', 'detail']) {
+      const name = `milestone-${number}-${kind}`;
+      const shape = findShapeByName(slide, name);
+      if (!shape || !markerBox) continue;
+      const box = getShapeBoundsResolved(pres, shape);
+      if (!box) continue;
+      const centerGap = Math.abs(markerBox.x + markerBox.w / 2 - box.x - box.w / 2);
+      if (centerGap > 0.08 * EMU_PER_INCH || getParagraphAlignment(shape, 0) !== 'ctr') {
+        issues.push({ slideIndex, kind: 'milestone-text-misaligned', severity: 'error', marker: `milestone-${number}`, textShape: name });
+      }
+    }
+  }
+  return issues;
+}
 
 function segmentIntersectsInterior(start, end, bounds) {
   const insetX = bounds.w * 0.05;
@@ -55,5 +83,5 @@ export function auditSlideGeometry(pres, slide, slideIndex) {
     flip: getShapeFlip(shape),
     z,
   }));
-  return detectConnectorTextCrossings(shapes, slideIndex);
+  return [...detectConnectorTextCrossings(shapes, slideIndex), ...detectDeckcraftSemantics(pres, slide, slideIndex)];
 }

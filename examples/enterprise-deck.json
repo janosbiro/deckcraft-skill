@@ -53,7 +53,7 @@
       "id": "05-sequence", "role": "process", "claim": "Three releases can remove friction in six weeks.", "layout": "timeline",
       "elements": [
         { "type": "text", "style": "title", "text": "Ship in three focused releases" },
-        { "type": "timeline", "steps": [
+        { "type": "timeline", "relation": "time", "steps": [
           { "label": "Weeks 1–2", "detail": "Map first-session exits and instrument the key steps." },
           { "label": "Weeks 3–4", "detail": "Launch a shorter path with one guided success." },
           { "label": "Weeks 5–6", "detail": "Test and refine with cohort-level evidence." }
