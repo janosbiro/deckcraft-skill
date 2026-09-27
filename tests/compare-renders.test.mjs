@@ -20,3 +20,16 @@ test('rejects gaps and duplicate slide numbers', () => {
   assert.throws(() => pairSlideImages(['slide-01.png', 'slide-03.png'], ['libreoffice-1.png', 'libreoffice-3.png']), /Missing slide 2/);
   assert.throws(() => pairSlideImages(['slide-1.png', 'slide-01.png'], ['libreoffice-1.png']), /duplicate slide number/);
 });
+
+test('pairs only the selected edited slide', () => {
+  assert.deepEqual(pairSlideImages(['slide-03.png'], ['libreoffice-3.png'], [3]), [
+    { index: 3, preview: 'slide-03.png', libreOffice: 'libreoffice-3.png' },
+  ]);
+});
+
+test('rejects stale preview images outside the selected slides', () => {
+  assert.throws(
+    () => pairSlideImages(['slide-01.png', 'slide-03.png'], ['libreoffice-3.png'], [3]),
+    /Slide-count mismatch|Selection has/,
+  );
+});

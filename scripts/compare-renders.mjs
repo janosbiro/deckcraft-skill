@@ -3,6 +3,7 @@ import { mkdir, mkdtemp, readdir, writeFile } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
 import { join, relative, resolve, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { parseSlideSelection, parseSlidesFlag } from './slide-selection.mjs';
 
 function indexImages(names, pattern, label) {
   const indexed = new Map();
@@ -18,15 +19,16 @@ function indexImages(names, pattern, label) {
   return indexed;
 }
 
-export function pairSlideImages(previewNames, libreOfficeNames) {
+export function pairSlideImages(previewNames, libreOfficeNames, selectedSlides) {
   const preview = indexImages(previewNames, /^slide-(\d+)\.png$/i, 'Preview');
   const libreOffice = indexImages(libreOfficeNames, /^libreoffice-(\d+)\.png$/i, 'LibreOffice');
   if (preview.size === 0) throw new Error('No preview PNGs found. Run preview:example first.');
   if (preview.size !== libreOffice.size) {
     throw new Error(`Slide-count mismatch: ${preview.size} preview PNGs, ${libreOffice.size} LibreOffice pages.`);
   }
-  return Array.from({ length: preview.size }, (_, position) => {
-    const index = position + 1;
+  const expected = selectedSlides ?? Array.from({ length: preview.size }, (_, position) => position + 1);
+  if (expected.length !== preview.size) throw new Error(`Selection has ${expected.length} slides but preview has ${preview.size}. Use a fresh preview directory.`);
+  return expected.map((index) => {
     if (!preview.has(index) || !libreOffice.has(index)) {
       throw new Error(`Missing slide ${index} in the preview or LibreOffice render.`);
     }
@@ -76,19 +78,31 @@ function reportHtml(pairs, previewDir, renderDir, outputDir) {
 }
 
 async function main() {
-  const [previewDir, pdf, outputDir = 'artifacts/comparison'] = process.argv.slice(2);
+  const args = process.argv.slice(2);
+  const previewDir = args.shift();
+  const pdf = args.shift();
   if (!previewDir || !pdf) {
-    console.error('Usage: node scripts/compare-renders.mjs <preview-dir> <pdf> [output-dir]');
+    console.error('Usage: node scripts/compare-renders.mjs <preview-dir> <pdf> [output-dir] [--slides 3,5-6]');
     process.exitCode = 2;
     return;
   }
+  const outputDir = args[0] && !args[0].startsWith('--') ? args.shift() : 'artifacts/comparison';
+  const slideSpec = parseSlidesFlag(args);
+  const previewNames = await readdir(previewDir);
+  const previewNumbers = previewNames.filter((name) => /^slide-\d+\.png$/i.test(name)).map((name) => Number(/^slide-(\d+)/i.exec(name)[1]));
+  const selected = slideSpec === undefined ? undefined : parseSlideSelection(slideSpec, Math.max(...previewNumbers));
   await mkdir(outputDir, { recursive: true });
   const renderDir = await mkdtemp(join(outputDir, 'libreoffice-'));
-  const result = spawnSync('pdftoppm', ['-png', '-r', '96', pdf, join(renderDir, 'libreoffice')], { encoding: 'utf8' });
-  if (result.error?.code === 'ENOENT') throw new Error('pdftoppm is not on PATH. Install Poppler for render comparison.');
-  if (result.error) throw result.error;
-  if (result.status !== 0) throw new Error(`pdftoppm failed: ${result.stderr.trim() || `exit ${result.status}`}`);
-  const pairs = pairSlideImages(await readdir(previewDir), await readdir(renderDir));
+  const jobs = selected
+    ? selected.map((number) => ['-f', String(number), '-l', String(number), '-singlefile', '-png', '-r', '96', pdf, join(renderDir, `libreoffice-${number}`)])
+    : [['-png', '-r', '96', pdf, join(renderDir, 'libreoffice')]];
+  for (const job of jobs) {
+    const result = spawnSync('pdftoppm', job, { encoding: 'utf8' });
+    if (result.error?.code === 'ENOENT') throw new Error('pdftoppm is not on PATH. Install Poppler for render comparison.');
+    if (result.error) throw result.error;
+    if (result.status !== 0) throw new Error(`pdftoppm failed: ${result.stderr.trim() || `exit ${result.status}`}`);
+  }
+  const pairs = pairSlideImages(previewNames, await readdir(renderDir), selected);
   const report = join(outputDir, 'index.html');
   await writeFile(report, reportHtml(pairs, previewDir, renderDir, outputDir));
   console.log(`Paired ${pairs.length} slides in ${report}`);

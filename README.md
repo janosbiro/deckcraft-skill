@@ -39,14 +39,24 @@ npm run qa:compare
 
 The example makes native text, a chart, and a table. Generated files go under `artifacts/` and are ignored by Git. `qa:lo` requires a `soffice` or `libreoffice` executable on `PATH`; it exports a PDF. `qa:compare` also requires Poppler's `pdftoppm` on `PATH` and writes `artifacts/comparison/index.html`, pairing every preview slide with its LibreOffice render. Open that report to check text wrapping, chart axes, and table styling. It checks page counts but does not automatically decide whether a visual difference is acceptable. The PNG previews and PDF are QA artifacts, not source for the PPTX.
 
+For a **single edited slide**, keep the visual loop small:
+
+```bash
+node scripts/render-preview.mjs artifacts/example.pptx artifacts/qa-slide-2 --slides 2
+node scripts/qa-libreoffice.mjs artifacts/example.pptx artifacts/final
+node scripts/compare-renders.mjs artifacts/qa-slide-2 artifacts/final/example.pdf artifacts/compare-slide-2 --slides 2
+```
+
+The first command writes only slide 2's SVG/PNG plus selected-slide text and geometry findings. The comparison renders only page 2 from the final PDF. Open the selected PNG and slide pair in an image-capable agent, decide `PASS` or `FIX`, and rerun only slide 2 after a fix. Use a fresh preview directory to avoid stale images. Omit `--slides` for a new deck or a global theme/layout change. See [slide design and visual QA](references/visual-design-qa.md) for the explicit pass criteria and change-scope rules. The geometry check detects connector lines crossing text frames; it does not replace visual judgment.
+
 ## Design workflow
 
 1. Form a story spine: audience, decision, tension, proof, and call to action.
 2. Give each slide one claim and choose a layout grammar from [references/layout-grammars.md](references/layout-grammars.md).
 3. Store the semantic plan in the [deck IR](references/schema.md), then validate it.
 4. Author editable text, tables, charts, and grouped diagrams with native PPTX objects. When editing a template, reuse its masters, layouts, and placeholders.
-5. Render every slide to PNG, inspect both individual slides and the complete sequence, fix hierarchy, clipping, and repetition, then rerender.
-6. Export the final PPTX with LibreOffice, build the side-by-side comparison, and inspect each slide. Report any preview/Office differences or unsupported objects.
+5. For a new deck, render and inspect every slide and the complete sequence. After a local edit, render and inspect only changed slides with `--slides`; expand the scope when shared design inputs change.
+6. Export the current PPTX with LibreOffice, compare the edited slides (or the full deck at first baseline), and inspect the selected pairs. Report any preview/Office differences or unsupported objects.
 
 The minimal renderer implements `hero`, `proof`, and `matrix` layouts for the sample. Other layout grammars guide the agent's design decisions; they are not all automated by the example script. The preview package is a fast approximation, so final visual QA still matters.
 

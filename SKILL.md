@@ -13,7 +13,7 @@ Use this skill when the user wants a professional presentation, an editable PPTX
 
 Treat every deck as a communication system, not a collection of decorated slides. First establish the audience, decision, narrative arc, evidence, and desired action. Then express the deck as a typed IR and choose a layout grammar per slide.
 
-For the exact IR contract, read [references/schema.md](references/schema.md). For composition choices, read [references/layout-grammars.md](references/layout-grammars.md).
+For the exact IR contract, read [references/schema.md](references/schema.md). For composition choices, read [references/layout-grammars.md](references/layout-grammars.md). Before authoring or reviewing slides, read the explicit [slide design and visual QA criteria](references/visual-design-qa.md).
 
 ## Required workflow
 
@@ -21,8 +21,8 @@ For the exact IR contract, read [references/schema.md](references/schema.md). Fo
 2. **Deck IR** — represent slide role, claim, content blocks, visual assets, data, and template intent in JSON or an equivalent typed object. Validate it with `scripts/validate_deck_ir.mjs`. `examples/minimal-deck.json` shows the executable subset.
 3. **Design system** — define a small token set for typography, color, spacing, radius, and chart styling. Use one dominant visual idea per slide and vary composition intentionally.
 4. **Native authoring** — create or edit PPTX through `@office-kit/pptx`. Prefer template masters/layouts/placeholders when a source deck exists. Keep text, paragraphs, tables, and charts editable.
-5. **Preview loop** — render PNG previews with `@office-kit/pptx-preview`, inspect slide-by-slide and as a sequence, and correct overflow, weak contrast, accidental repetition, or unclear hierarchy. Use text-layout audit output as a signal, not as a substitute for visual judgment. Run `scripts/render-preview.mjs` for the included example.
-6. **Final QA** — render with LibreOffice headless when available using `scripts/qa-libreoffice.mjs`. Where Poppler is available, run `scripts/compare-renders.mjs` to create a side-by-side report, inspect each slide, and report unsupported features or renderer differences. The report checks coverage, not visual equivalence automatically.
+5. **Preview loop** — render PNG previews with `@office-kit/pptx-preview`. On a new deck, inspect every slide once. After a local edit, use `scripts/render-preview.mjs ... --slides N` and inspect only changed slides; review all affected slides after shared style/template changes. Open each selected PNG in the agent's image tool and record a concise `PASS`/`FIX` decision using the visual QA criteria. Text and geometry findings are signals, not substitutes for seeing the slide.
+6. **Final QA** — render the current PPTX with LibreOffice headless using `scripts/qa-libreoffice.mjs`. With Poppler, use `scripts/compare-renders.mjs ... --slides N` for edited slides or omit the flag for a first full-deck check. Inspect selected slide pairs, fix failures, and report unsupported features or renderer differences. The report checks coverage, not visual equivalence automatically.
 
 ## Non-negotiable PPTX policies
 
