@@ -13,6 +13,16 @@ export function validateDeck(deck) {
   need(deck.meta?.title, 'meta.title');
   need(deck.meta?.audience, 'meta.audience');
   if (!Array.isArray(deck.slides) || !deck.slides.length) errors.push('slides must be a non-empty array');
+  const sourceIds = new Set();
+  if (deck.sources !== undefined && !Array.isArray(deck.sources)) errors.push('sources must be an array');
+  for (const [index, source] of (Array.isArray(deck.sources) ? deck.sources : []).entries()) {
+    if (!source || typeof source !== 'object' || Array.isArray(source)) { errors.push(`sources[${index}] must be an object`); continue; }
+    need(source.id, `sources[${index}].id`);
+    if (sourceIds.has(source.id)) errors.push(`sources[${index}].id must be unique`);
+    sourceIds.add(source.id);
+    need(source.label, `sources[${index}].label`);
+    if (source.url !== undefined && typeof source.url !== 'string') errors.push(`sources[${index}].url must be a string`);
+  }
 
   let design;
   try {
@@ -40,14 +50,32 @@ export function validateDeck(deck) {
     if (slide.eyebrow !== undefined && (typeof slide.eyebrow !== 'string' || !slide.eyebrow.trim() || slide.eyebrow.length > 60)) {
       errors.push(`${path}.eyebrow must be a short, non-empty reader-facing label`);
     }
+    if (slide.evidenceRefs !== undefined && !Array.isArray(slide.evidenceRefs)) errors.push(`${path}.evidenceRefs must be an array`);
+    for (const [factIndex, fact] of (Array.isArray(slide.evidenceRefs) ? slide.evidenceRefs : []).entries()) {
+      const fp = `${path}.evidenceRefs[${factIndex}]`;
+      need(fact?.claim, `${fp}.claim`);
+      if (!Array.isArray(fact?.sourceIds) || !fact.sourceIds.length) errors.push(`${fp}.sourceIds must cite at least one source`);
+      else for (const sourceId of fact.sourceIds) if (!sourceIds.has(sourceId)) errors.push(`${fp} refers to unknown source id ${sourceId}`);
+      if (fact?.values !== undefined && (!Array.isArray(fact.values) || fact.values.some((value) => typeof value !== 'string' && !Number.isFinite(value)))) {
+        errors.push(`${fp}.values must contain only strings or finite numbers`);
+      }
+    }
     if (slide.templateSlide !== undefined) {
       if (!deck.template?.source) errors.push(`${path}.templateSlide needs template.source`);
       if (!Number.isInteger(slide.templateSlide) || slide.templateSlide < 1) errors.push(`${path}.templateSlide must be a 1-based integer`);
       if (!slide.fields || typeof slide.fields !== 'object' || Array.isArray(slide.fields) || !Object.keys(slide.fields).length) {
-        errors.push(`${path}.fields must provide at least one template token`);
+        if (!slide.shapeFields || typeof slide.shapeFields !== 'object' || Array.isArray(slide.shapeFields) || !Object.keys(slide.shapeFields).length) {
+          errors.push(`${path} needs fields or shapeFields for template editing`);
+        }
       } else {
         for (const [key, value] of Object.entries(slide.fields)) {
           if (!key.trim() || typeof value !== 'string' || !value.trim()) errors.push(`${path}.fields values must be non-empty strings`);
+        }
+      }
+      for (const [name, binding] of Object.entries(slide.shapeFields ?? {})) {
+        if (!name.trim() || !binding || !Number.isSafeInteger(binding.shapeId) || binding.shapeId < 1
+          || typeof binding.value !== 'string' || !binding.value.trim()) {
+          errors.push(`${path}.shapeFields.${name} needs a positive shapeId and non-empty value`);
         }
       }
       if (slide.layout || slide.elements) errors.push(`${path} template slides cannot also declare layout/elements`);

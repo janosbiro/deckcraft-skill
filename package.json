@@ -7,6 +7,12 @@
   "engines": { "node": ">=22.18.0" },
   "scripts": {
     "validate:ir": "node scripts/validate_deck_ir.mjs",
+    "init:project": "node scripts/init-project.mjs",
+    "catalog:template": "node scripts/template-catalog.mjs",
+    "audition": "node scripts/audition-designs.mjs",
+    "audit:evidence": "node scripts/audit-evidence.mjs",
+    "qa:repair-packet": "node scripts/create-repair-packet.mjs",
+    "qa:review-receipt": "node scripts/create-review-receipt.mjs",
     "build:example": "node scripts/build-deck.mjs examples/minimal-deck.json artifacts/example.pptx",
     "preview:example": "node scripts/render-preview.mjs artifacts/example.pptx artifacts/preview",
     "build:enterprise": "node scripts/build-deck.mjs examples/enterprise-deck.json artifacts/enterprise.pptx",

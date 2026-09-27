@@ -51,6 +51,38 @@ npm run preview:enterprise
 
 To exercise the four additional editable compositions, run `npm run build:architecture` and `npm run preview:architecture` and inspect the resulting images under ignored `artifacts/`.
 
+## Reusable project setup and design exploration
+
+Create non-secret, project-local brand settings and human-readable rules without overwriting existing files:
+
+```bash
+node scripts/init-project.mjs /path/to/project
+```
+
+Put approved local templates under `.deckcraft/templates/` (keep the binaries local/private). Build and validate against that project's explicit semantic tokens with `--config /path/to/project/.deckcraft/config.json`. Deck-level theme tokens override project defaults. The skill reads `.deckcraft/DECKCRAFT.md` for project-specific narrative, brand, and data conventions.
+
+Inventory a real PPTX template into a local JSON catalogue and PNG thumbnails; the source PPTX itself is not copied or modified:
+
+```bash
+node scripts/template-catalog.mjs /path/to/brand-template.pptx /path/to/project/.deckcraft/templates/brand --slides 1,3-6
+```
+
+The catalogue includes current editable shape IDs and text for mapped template slide fields. Prefer `{{token}}` fields when the template is authored for them; use `shapeFields` only with IDs from the current catalogue. For choosing between visual styles without changing content/layout, run `node scripts/audition-designs.mjs examples/minimal-deck.json 2 /tmp/deckcraft-audition` and compare its three preview PNGs.
+
+Add top-level `sources` and slide-level `evidenceRefs` for material claims and values, then produce an auditable checklist with `node scripts/audit-evidence.mjs <deck-ir.json> <evidence-review.md>`. After rendering selected slides, use `node scripts/create-repair-packet.mjs <deck-ir.json> <preview-dir> <output-dir> --slides 2,4` to keep repair context bounded. A human review receipt can bind per-slide PASS/FIX decisions to PPTX/PNG SHA-256 hashes with `node scripts/create-review-receipt.mjs <current.pptx> <preview-dir> <review.json> <receipt.json>`.
+
+The review input is intentionally human-authored, for example:
+
+```json
+{
+  "reviewer": "Codex",
+  "items": [
+    { "slide": 2, "verdict": "PASS", "rationale": "Chart labels align and are readable at presentation size." },
+    { "slide": 4, "verdict": "FIX", "rationale": "The timeline label sits left of its marker." }
+  ]
+}
+```
+
 The twelve bounded slide patterns include `system-map` for trust boundaries, `evidence-map` for sourced qualitative taxonomies, `phased-plan` for gated rollout steps, and `capability-stack` for reusable platform controls alongside the original eight. Choose by meaning, not by cycling through patterns. They generate editable native text, charts, tables, lines, and grouped diagrams. `role` is never printed; optional `eyebrow` is for intentional reader-facing copy. `timeline` requires a true `time` or `ordered` relation. `image` is accepted only as a supporting photo/illustration/texture on a `split` slide; do not use it to rasterize chart or text content. A clean automated report is not a visual pass: inspect every new slide's PNG, then compare the current PPTX with a LibreOffice render before delivery.
 
 For an existing branded deck, `template.source` may point to a local `.pptx`; a slide with `templateSlide` (1-based) duplicates that slide and fills `{{token}}` fields from `fields`. The source slide's native structure, master and styling are preserved. Clone/fill and newly authored slides may be mixed in one deck. Tokens must each occur within a single text run; missing tokens fail loudly. The included renderer does not yet infer arbitrary editable regions or reproduce the upstream projects' full template libraries.

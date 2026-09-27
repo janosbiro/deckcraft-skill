@@ -38,3 +38,9 @@ Record `PASS` or `FIX` with the slide number and one concrete reason. A hard err
 Use a fresh output directory for each selected-preview run. The scripts reject stale PNGs from unselected slides in the same directory. `--slides 3,5-6` is 1-based and accepts individual slide numbers or ranges. The text-layout audit may still compute across the deck internally, but only selected findings and images are returned; the token-heavy visual review stays scoped.
 
 The automated geometry check detects top-level connectors crossing text frames, accidentally visible internal role shapes, and Deckcraft timeline labels whose frame or paragraph is off-center from the marker. It does not understand arbitrary nested groups, panel ownership, clipped first glyphs, or whether a diagram's meaning is correct. The per-slide visual decision is still required. If a title appears to lose a character, compare its rendered PNG with its IR/PPTX text; a clean text-layout JSON is not proof that every glyph painted correctly.
+# Targeted review artifacts
+
+- Review every slide for a new deck. For local edits, inspect only changed slides; expand to all affected slides after shared theme, template, font, or layout changes.
+- `create-repair-packet.mjs` requires explicit slide numbers and packages only those slides' claims, preview paths, text-layout/geometry findings, and repair scope.
+- Human visual review is still required when automated findings are empty. Record per-slide `PASS` or `FIX` with a concise rationale, then create a review receipt. PPTX and selected PNG hashes bind the decision to the exact reviewed files.
+- A changed file hash makes its former receipt stale. Never carry a prior PASS to a modified deck or preview.

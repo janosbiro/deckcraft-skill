@@ -6,6 +6,9 @@ The IR is deliberately semantic. A renderer may choose different coordinates, bu
 {
   "schemaVersion": "0.1",
   "meta": { "title": "", "audience": "", "objective": "" },
+  "sources": [
+    { "id": "source-1", "label": "Quarterly operating report", "url": "https://example.com/report", "publishedAt": "2026-01-31", "accessedAt": "2026-02-02" }
+  ],
   "theme": {
     "colors": { "ink": "#172033", "accent": "#175CD3", "paper": "#FFFFFF", "muted": "#475467" },
     "fonts": { "sans": "Arial", "serif": "Georgia" },
@@ -18,6 +21,9 @@ The IR is deliberately semantic. A renderer may choose different coordinates, bu
       "id": "slide-01",
       "role": "title | context | argument | evidence | comparison | process | decision | appendix",
       "claim": "One sentence the audience should remember",
+      "evidenceRefs": [
+        { "claim": "Activation improved", "values": [18, 24], "unit": "%", "denominator": "Eligible users, Q1 to Q2", "sourceIds": ["source-1"] }
+      ],
       "layout": "hero | split | proof | comparison | timeline | matrix | quote | close | system-map | evidence-map | phased-plan | capability-stack",
       "variant": "primary | alternate | dense (optional)",
       "eyebrow": "Optional reader-facing section label; never the internal role",
@@ -72,3 +78,9 @@ When a local PPTX is the visual source of truth, set `template.source` to its pa
 ```
 
 This clones source slide 2, substitutes `{{headline}}` and `{{subtitle}}`, and retains its native objects, master, and layout. Missing tokens are errors. A token must be contained in one PowerPoint text run; tokens split across multiple runs need manual placeholder editing via Office Kit. A deck may combine template slides with authored layout slides. Original template slides are removed from the output after the requested copies are built.
+
+To bind a known editable shape instead, use `"shapeFields": { "headline": { "shapeId": 7, "value": "The new headline" } }`. The template catalogue script lists shape IDs, names, and existing text for selected source slides. Shape IDs are scoped to a particular source slide; verify the catalogue again if the source template changes.
+
+Project config is optional and explicit: `.deckcraft/config.json` holds brand `theme` tokens, while `.deckcraft/DECKCRAFT.md` holds human-readable local rules. Pass `--config .deckcraft/config.json` to build/validation; project tokens are the base and deck-level theme overrides them. Never add secrets, source decks, or generated previews to the skill repository.
+
+For each material claim/value, add `evidenceRefs` with source IDs and, where relevant, values, units, and denominator/scope. Evidence audit output checks traceability only, not whether a source substantiates its claim.
