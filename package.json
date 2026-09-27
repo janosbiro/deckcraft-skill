@@ -9,6 +9,8 @@
     "validate:ir": "node scripts/validate_deck_ir.mjs",
     "build:example": "node scripts/build-deck.mjs examples/minimal-deck.json artifacts/example.pptx",
     "preview:example": "node scripts/render-preview.mjs artifacts/example.pptx artifacts/preview",
+    "build:enterprise": "node scripts/build-deck.mjs examples/enterprise-deck.json artifacts/enterprise.pptx",
+    "preview:enterprise": "node scripts/render-preview.mjs artifacts/enterprise.pptx artifacts/preview-enterprise",
     "qa:lo": "node scripts/qa-libreoffice.mjs artifacts/example.pptx artifacts/final",
     "qa:compare": "node scripts/compare-renders.mjs artifacts/preview artifacts/final/example.pdf artifacts/comparison",
     "test": "node --test tests/*.test.mjs"

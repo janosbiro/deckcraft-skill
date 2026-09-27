@@ -6,7 +6,12 @@ The IR is deliberately semantic. A renderer may choose different coordinates, bu
 {
   "schemaVersion": "0.1",
   "meta": { "title": "", "audience": "", "objective": "" },
-  "theme": { "fontFamily": "Aptos", "colors": { "ink": "#111827", "accent": "#2563EB" } },
+  "theme": {
+    "colors": { "ink": "#172033", "accent": "#175CD3", "paper": "#FFFFFF", "muted": "#475467" },
+    "fonts": { "sans": "Arial", "serif": "Georgia" },
+    "type": { "title": 34, "body": 20 },
+    "layout": { "width": 13.333, "height": 7.5, "margin": 0.7 }
+  },
   "template": { "source": null, "reuseMaster": true, "reuseLayouts": true },
   "slides": [
     {
@@ -14,11 +19,15 @@ The IR is deliberately semantic. A renderer may choose different coordinates, bu
       "role": "title | context | argument | evidence | comparison | process | decision | appendix",
       "claim": "One sentence the audience should remember",
       "layout": "hero | split | proof | comparison | timeline | matrix | quote | close",
+      "variant": "primary | alternate | dense (optional)",
       "elements": [
-        { "type": "text", "text": "", "style": "title | body | label | metric" },
+        { "type": "text", "text": "", "style": "title | body | label | metric | quote | attribution | action" },
         { "type": "table", "columns": [], "rows": [] },
         { "type": "chart", "chartType": "bar | column | line | doughnut", "categories": [], "series": [{ "name": "", "values": [] }] },
-        { "type": "image", "src": "", "role": "photo | texture | illustration" }
+        { "type": "image", "src": "", "role": "photo | texture | illustration" },
+        { "type": "bullets", "items": ["First point", "Second point"] },
+        { "type": "comparison", "left": { "heading": "", "body": "" }, "right": { "heading": "", "body": "" } },
+        { "type": "timeline", "steps": [{ "label": "", "detail": "" }] }
       ],
       "speakerNotes": ""
     }
@@ -34,4 +43,23 @@ The IR is deliberately semantic. A renderer may choose different coordinates, bu
 - A table row or chart series carries data; it is not a screenshot.
 - `template.reuseMaster` and `template.reuseLayouts` default to true when a source deck exists.
 - Images may be raster, but no image may be the only carrier of text or quantitative meaning.
-- The included renderer accepts only `hero`, `proof`, and `matrix`; use Office Kit directly for the other grammars.
+- `bullets` are available in `split` as 2–5 concise items and render as paragraphs inside one native text frame, not as separate textboxes.
+- The included renderer accepts all eight listed layouts; see [layout grammars](layout-grammars.md) for each layout's required elements. `alternate` mirrors layout slots and `dense` expands them slightly; neither changes content semantics.
+- `theme` overrides [semantic design defaults](../scripts/design-system.mjs). `ink` and `muted` must meet 4.5:1 contrast on `paper`; `accent` must meet 3:1. The included renderer requires 16:9 geometry.
+- Source-image paths are relative to the IR file. Images are supported on `split` slides only; they may not carry text, charts, or tables.
+
+## Branded template slide mode
+
+When a local PPTX is the visual source of truth, set `template.source` to its path (relative to the IR file) and use this slide form:
+
+```json
+{
+  "id": "brand-opening",
+  "role": "title",
+  "claim": "The decision in one sentence",
+  "templateSlide": 2,
+  "fields": { "headline": "The decision in one sentence", "subtitle": "A short supporting line" }
+}
+```
+
+This clones source slide 2, substitutes `{{headline}}` and `{{subtitle}}`, and retains its native objects, master, and layout. Missing tokens are errors. A token must be contained in one PowerPoint text run; tokens split across multiple runs need manual placeholder editing via Office Kit. A deck may combine template slides with authored layout slides. Original template slides are removed from the output after the requested copies are built.

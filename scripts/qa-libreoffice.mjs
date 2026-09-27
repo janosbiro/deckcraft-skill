@@ -14,9 +14,13 @@ if (!input) {
 await mkdir(output, { recursive: true });
 const profile = await mkdtemp(join(tmpdir(), 'deckcraft-lo-'));
 try {
+  const cache = join(profile, 'cache');
+  await mkdir(cache, { recursive: true });
   let found = false;
   for (const command of ['soffice', 'libreoffice']) {
-    const result = spawnSync(command, [`-env:UserInstallation=${pathToFileURL(profile).href}`, '--headless', '--convert-to', 'pdf', '--outdir', output, input], { stdio: 'inherit' });
+    const result = spawnSync(command, [`-env:UserInstallation=${pathToFileURL(profile).href}`, '--headless', '--convert-to', 'pdf', '--outdir', output, input], {
+      stdio: 'inherit', env: { ...process.env, XDG_CACHE_HOME: cache },
+    });
     if (result.error?.code === 'ENOENT') continue;
     found = true;
     if (result.error) throw result.error;

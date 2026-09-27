@@ -18,6 +18,7 @@ For each slide selected for review, open its actual PNG in the agent's image-vie
 
 - **Fit:** any clipped object, line over text, unexpected wrap, panel escape, or insufficient gap?
 - **Readability:** can title, key evidence, diagram labels, and caveats be read at presentation distance?
+- **Font fidelity:** did LibreOffice substitute the intended typeface or change wrapping, weight, or hierarchy compared with the preview?
 - **Meaning:** does the diagram/chart show the relationship claimed by the title and copy? Are arrows and colors semantically correct?
 - **Hierarchy:** one focal point and a clear reading order, without redundant callout bars or unneeded cards?
 

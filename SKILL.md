@@ -18,11 +18,13 @@ For the exact IR contract, read [references/schema.md](references/schema.md). Fo
 ## Required workflow
 
 1. **Brief and story spine** — identify audience, objective, key tension, proof, and call to action. Create a slide-by-slide claim sequence before writing slide copy.
-2. **Deck IR** — represent slide role, claim, content blocks, visual assets, data, and template intent in JSON or an equivalent typed object. Validate it with `scripts/validate_deck_ir.mjs`. `examples/minimal-deck.json` shows the executable subset.
-3. **Design system** — define a small token set for typography, color, spacing, radius, and chart styling. Use one dominant visual idea per slide and vary composition intentionally.
-4. **Native authoring** — create or edit PPTX through `@office-kit/pptx`. Prefer template masters/layouts/placeholders when a source deck exists. Keep text, paragraphs, tables, and charts editable.
+2. **Deck IR** — represent slide role, claim, content blocks, visual assets, data, and template intent in JSON or an equivalent typed object. Validate it with `scripts/validate_deck_ir.mjs`. `examples/enterprise-deck.json` exercises all eight supported layouts; its facts are illustrative only.
+3. **Design system** — resolve semantic color, typography, and grid tokens from `theme` through `scripts/design-system.mjs`. Use one dominant visual idea per slide. Keep geometry in the tested layout contracts (`primary`, `alternate`, `dense`) instead of inventing coordinates when an existing contract fits.
+4. **Native authoring** — for a branded source deck, prefer `template.source` plus `templateSlide`/`fields` to clone and fill native slides. For new slides, use the eight Office Kit layouts in `scripts/render-layouts.mjs`. Both paths can coexist. Text, tables, and charts remain editable. A missing template token is a failure, not a cue to redraw the source slide.
 5. **Preview loop** — render PNG previews with `@office-kit/pptx-preview`. On a new deck, inspect every slide once. After a local edit, use `scripts/render-preview.mjs ... --slides N` and inspect only changed slides; review all affected slides after shared style/template changes. Open each selected PNG in the agent's image tool and record a concise `PASS`/`FIX` decision using the visual QA criteria. Text and geometry findings are signals, not substitutes for seeing the slide.
 6. **Final QA** — render the current PPTX with LibreOffice headless using `scripts/qa-libreoffice.mjs`. With Poppler, use `scripts/compare-renders.mjs ... --slides N` for edited slides or omit the flag for a first full-deck check. Inspect selected slide pairs, fix failures, and report unsupported features or renderer differences. The report checks coverage, not visual equivalence automatically.
+
+Font substitution is a material QA failure even when geometry tests pass. Choose a font installed on the production render host (the examples use Arial), or package/deploy the licensed corporate font through an approved process. If LibreOffice renders a different family than the preview, correct the font environment or theme before delivery.
 
 ## Non-negotiable PPTX policies
 
@@ -46,3 +48,5 @@ Before delivery, confirm:
 - the final PPTX opens, remains editable, and has passed preview plus final render QA where the required renderers are available.
 
 If a requested feature cannot be represented natively by the installed adapter, say so explicitly and preserve the editable parts instead of silently flattening the slide.
+
+The included code adapts bounded parts of two MIT-licensed upstream projects; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Their full engines, style libraries, and assets are not installed by this skill.

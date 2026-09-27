@@ -6,7 +6,7 @@
     "objective": "Approve the next investment"
   },
   "theme": {
-    "fontFamily": "Aptos",
+    "fontFamily": "Arial",
     "colors": { "ink": "#111827", "accent": "#2563EB", "muted": "#64748B" }
   },
   "template": { "source": null, "reuseMaster": true, "reuseLayouts": true },

@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "0.1",
+  "meta": {
+    "title": "Activation strategy",
+    "audience": "Executive leadership",
+    "objective": "Approve a six-week activation sprint"
+  },
+  "theme": {
+    "colors": {
+      "ink": "#142033",
+      "accent": "#1557B0",
+      "paper": "#FFFFFF",
+      "surface": "#F3F6FA",
+      "muted": "#475467",
+      "line": "#CFD7E3",
+      "accentOnDark": "#94C9FF"
+    },
+    "fonts": { "sans": "Arial", "serif": "Georgia" }
+  },
+  "slides": [
+    {
+      "id": "01-opening", "role": "title", "claim": "Activation is the next growth lever.", "layout": "hero",
+      "elements": [
+        { "type": "text", "style": "title", "text": "Make the first session count" },
+        { "type": "text", "style": "body", "text": "A six-week plan to turn new users into active customers." }
+      ]
+    },
+    {
+      "id": "02-opportunity", "role": "argument", "claim": "Most lost users leave before their first success.", "layout": "split",
+      "elements": [
+        { "type": "text", "style": "title", "text": "The opportunity is early" },
+        { "type": "text", "style": "body", "text": "New users are interested, but the current setup path asks for too much before showing value. A shorter first-run path can improve activation without increasing acquisition spend." },
+        { "type": "text", "style": "metric", "text": "42%" },
+        { "type": "text", "style": "label", "text": "of users leave before their first meaningful success" }
+      ]
+    },
+    {
+      "id": "03-evidence", "role": "evidence", "claim": "The largest drop occurs between first use and activation.", "layout": "proof",
+      "elements": [
+        { "type": "text", "style": "title", "text": "First use is not activation" },
+        { "type": "chart", "chartType": "column", "categories": ["Signed up", "First use", "Activated"], "series": [{ "name": "Users (000s)", "values": [100, 68, 29] }] },
+        { "type": "text", "style": "body", "text": "The sharpest avoidable loss is after the first visit, not at signup." }
+      ]
+    },
+    {
+      "id": "04-options", "role": "comparison", "claim": "A guided first success beats adding more instructions.", "layout": "comparison", "variant": "alternate",
+      "elements": [
+        { "type": "text", "style": "title", "text": "Guide, do not explain" },
+        { "type": "comparison", "left": { "heading": "Current path", "body": "Long setup checklist before the user sees an outcome." }, "right": { "heading": "Proposed path", "body": "One recommended action, immediate feedback, and optional depth." } }
+      ]
+    },
+    {
+      "id": "05-sequence", "role": "process", "claim": "Three releases can remove friction in six weeks.", "layout": "timeline",
+      "elements": [
+        { "type": "text", "style": "title", "text": "Ship in three focused releases" },
+        { "type": "timeline", "steps": [
+          { "label": "Weeks 1–2", "detail": "Map first-session exits and instrument the key steps." },
+          { "label": "Weeks 3–4", "detail": "Launch a shorter path with one guided success." },
+          { "label": "Weeks 5–6", "detail": "Test and refine with cohort-level evidence." }
+        ] }
+      ]
+    },
+    {
+      "id": "06-ownership", "role": "decision", "claim": "Each workstream has an accountable owner.", "layout": "matrix",
+      "elements": [
+        { "type": "text", "style": "title", "text": "Clear ownership keeps pace" },
+        { "type": "table", "columns": ["Workstream", "Owner", "Success measure"], "rows": [
+          ["First-run flow", "Product", "Completion rate"],
+          ["Guided success", "Design", "Time to value"],
+          ["Experiment", "Analytics", "Activation lift"]
+        ] }
+      ]
+    },
+    {
+      "id": "07-voice", "role": "context", "claim": "Users want a faster path to a useful outcome.", "layout": "quote",
+      "elements": [
+        { "type": "text", "style": "title", "text": "The user signal is consistent" },
+        { "type": "text", "style": "quote", "text": "I understood the product only after I finished the first task." },
+        { "type": "text", "style": "attribution", "text": "User interview · illustrative sample quote" }
+      ]
+    },
+    {
+      "id": "08-decision", "role": "decision", "claim": "Approve a six-week activation sprint.", "layout": "close",
+      "elements": [
+        { "type": "text", "style": "title", "text": "Approve the activation sprint" },
+        { "type": "text", "style": "action", "text": "Assign owners this week. Review the first cohort results in six weeks." }
+      ]
+    }
+  ]
+}

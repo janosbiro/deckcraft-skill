@@ -13,6 +13,10 @@ Choose a grammar by communication job, not by convenience.
 | `quote` | voice of customer or principle | short quote, attribution, contextual visual |
 | `close` | decision or call to action | recap, next action, owner, timing |
 
+These are implemented, not just prompts. `hero` needs a title (and usually a body); `split` needs one body paragraph or native bullet list plus a chart/table/image/metric; `proof` needs a chart; `comparison` needs a structured left/right comparison; `timeline` needs 3–5 labeled steps; `matrix` needs a native table; `quote` needs quote and attribution text; `close` needs action text. The validator rejects unsupported element/layout combinations rather than silently dropping them. See [the enterprise example](../examples/enterprise-deck.json) for each executable form.
+
+`variant: alternate` mirrors the named visual slots within the body area. This can change physical left/right order but never swaps the semantic labels. `variant: dense` expands slots slightly for legitimate dense evidence; it is not permission to shrink body type or pack more content into a slide. Always inspect the resulting PNG. Prefer `primary` unless the narrative gives a concrete reason to vary it.
+
 ## Composition rules
 
 - Vary layout only when the narrative role changes; vary internal emphasis when the role remains the same.
