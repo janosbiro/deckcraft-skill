@@ -9,7 +9,9 @@
     "validate:ir": "node scripts/validate_deck_ir.mjs",
     "build:example": "node scripts/build-deck.mjs examples/minimal-deck.json artifacts/example.pptx",
     "preview:example": "node scripts/render-preview.mjs artifacts/example.pptx artifacts/preview",
-    "qa:lo": "node scripts/qa-libreoffice.mjs artifacts/example.pptx artifacts/final"
+    "qa:lo": "node scripts/qa-libreoffice.mjs artifacts/example.pptx artifacts/final",
+    "qa:compare": "node scripts/compare-renders.mjs artifacts/preview artifacts/final/example.pdf artifacts/comparison",
+    "test": "node --test tests/*.test.mjs"
   },
   "dependencies": {
     "@office-kit/pptx": "0.21.0",

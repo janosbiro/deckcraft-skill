@@ -28,14 +28,16 @@ The skill instructions can guide decks created through other tools too; the incl
 From the cloned skill directory:
 
 ```bash
-npm install
+npm ci
+npm test
 npm run validate:ir -- examples/minimal-deck.json
 npm run build:example
 npm run preview:example
 npm run qa:lo
+npm run qa:compare
 ```
 
-The example makes native text, a chart, and a table. Generated files go under `artifacts/` and are ignored by Git. `qa:lo` requires a `soffice` or `libreoffice` executable on `PATH`; it exports a PDF for final visual inspection. The PNG previews and PDF are QA artifacts, not source for the PPTX.
+The example makes native text, a chart, and a table. Generated files go under `artifacts/` and are ignored by Git. `qa:lo` requires a `soffice` or `libreoffice` executable on `PATH`; it exports a PDF. `qa:compare` also requires Poppler's `pdftoppm` on `PATH` and writes `artifacts/comparison/index.html`, pairing every preview slide with its LibreOffice render. Open that report to check text wrapping, chart axes, and table styling. It checks page counts but does not automatically decide whether a visual difference is acceptable. The PNG previews and PDF are QA artifacts, not source for the PPTX.
 
 ## Design workflow
 
@@ -44,7 +46,7 @@ The example makes native text, a chart, and a table. Generated files go under `a
 3. Store the semantic plan in the [deck IR](references/schema.md), then validate it.
 4. Author editable text, tables, charts, and grouped diagrams with native PPTX objects. When editing a template, reuse its masters, layouts, and placeholders.
 5. Render every slide to PNG, inspect both individual slides and the complete sequence, fix hierarchy, clipping, and repetition, then rerender.
-6. Export the final PPTX with LibreOffice and inspect the PDF. Report any preview/Office differences or unsupported objects.
+6. Export the final PPTX with LibreOffice, build the side-by-side comparison, and inspect each slide. Report any preview/Office differences or unsupported objects.
 
 The minimal renderer implements `hero`, `proof`, and `matrix` layouts for the sample. Other layout grammars guide the agent's design decisions; they are not all automated by the example script. The preview package is a fast approximation, so final visual QA still matters.
 

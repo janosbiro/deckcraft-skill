@@ -22,7 +22,7 @@ For the exact IR contract, read [references/schema.md](references/schema.md). Fo
 3. **Design system** — define a small token set for typography, color, spacing, radius, and chart styling. Use one dominant visual idea per slide and vary composition intentionally.
 4. **Native authoring** — create or edit PPTX through `@office-kit/pptx`. Prefer template masters/layouts/placeholders when a source deck exists. Keep text, paragraphs, tables, and charts editable.
 5. **Preview loop** — render PNG previews with `@office-kit/pptx-preview`, inspect slide-by-slide and as a sequence, and correct overflow, weak contrast, accidental repetition, or unclear hierarchy. Use text-layout audit output as a signal, not as a substitute for visual judgment. Run `scripts/render-preview.mjs` for the included example.
-6. **Final QA** — render with LibreOffice headless when available using `scripts/qa-libreoffice.mjs`, compare representative slides against the preview, and report any unsupported features or renderer differences.
+6. **Final QA** — render with LibreOffice headless when available using `scripts/qa-libreoffice.mjs`. Where Poppler is available, run `scripts/compare-renders.mjs` to create a side-by-side report, inspect each slide, and report unsupported features or renderer differences. The report checks coverage, not visual equivalence automatically.
 
 ## Non-negotiable PPTX policies
 

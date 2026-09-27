@@ -24,7 +24,7 @@
     {
       "id": "slide-02",
       "role": "evidence",
-      "claim": "Activation is the bottleneck, not awareness.",
+      "claim": "Activation has the steepest proportional drop.",
       "layout": "proof",
       "elements": [
         { "type": "text", "text": "Activation is the bottleneck", "style": "title" },
@@ -34,7 +34,7 @@
           "categories": ["Awareness", "First use", "Activation"],
           "series": [{ "name": "Conversion", "values": [68, 42, 18] }]
         },
-        { "type": "text", "text": "The largest drop happens after first use.", "style": "body" }
+        { "type": "text", "text": "57% drop", "style": "body" }
       ]
     },
     {
