@@ -1,0 +1,46 @@
+# Dependencies and caches
+node_modules/
+.npm/
+.pnpm-store/
+.cache/
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+ENV/
+
+# Secrets and local configuration
+.env*
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Generated decks, previews, and office exports
+artifacts/
+dist/
+build/
+coverage/
+*.pptx
+*.pptm
+*.ppt
+*.pdf
+*.odp
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.tif
+*.tiff
+*.bmp
+*.ico
+*.zip
+
+# Editor and OS files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo

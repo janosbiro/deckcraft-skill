@@ -1,0 +1,4 @@
+interface:
+  display_name: "Deckcraft"
+  short_description: "Build polished editable PowerPoint decks with native objects and visual QA"
+  default_prompt: "Create a professional editable PPTX from this brief. Start with the story spine and deck IR, use native text/table/chart objects, preview every slide, and run final render QA."

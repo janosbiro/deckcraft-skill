@@ -1,0 +1,18 @@
+{
+  "name": "deckcraft-skill",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A portable agent skill for professional editable PowerPoint decks.",
+  "type": "module",
+  "engines": { "node": ">=22.18.0" },
+  "scripts": {
+    "validate:ir": "node scripts/validate_deck_ir.mjs",
+    "build:example": "node scripts/build-deck.mjs examples/minimal-deck.json artifacts/example.pptx",
+    "preview:example": "node scripts/render-preview.mjs artifacts/example.pptx artifacts/preview",
+    "qa:lo": "node scripts/qa-libreoffice.mjs artifacts/example.pptx artifacts/final"
+  },
+  "dependencies": {
+    "@office-kit/pptx": "0.21.0",
+    "@office-kit/pptx-preview": "0.11.0"
+  }
+}

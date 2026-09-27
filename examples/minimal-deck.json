@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "0.1",
+  "meta": {
+    "title": "From launch to growth loop",
+    "audience": "Leadership team",
+    "objective": "Approve the next investment"
+  },
+  "theme": {
+    "fontFamily": "Aptos",
+    "colors": { "ink": "#111827", "accent": "#2563EB", "muted": "#64748B" }
+  },
+  "template": { "source": null, "reuseMaster": true, "reuseLayouts": true },
+  "slides": [
+    {
+      "id": "slide-01",
+      "role": "title",
+      "claim": "The next release turns adoption into a repeatable growth loop.",
+      "layout": "hero",
+      "elements": [
+        { "type": "text", "text": "From launch to growth loop", "style": "title" },
+        { "type": "text", "text": "A focused product story", "style": "body" }
+      ]
+    },
+    {
+      "id": "slide-02",
+      "role": "evidence",
+      "claim": "Activation is the bottleneck, not awareness.",
+      "layout": "proof",
+      "elements": [
+        { "type": "text", "text": "Activation is the bottleneck", "style": "title" },
+        {
+          "type": "chart",
+          "chartType": "column",
+          "categories": ["Awareness", "First use", "Activation"],
+          "series": [{ "name": "Conversion", "values": [68, 42, 18] }]
+        },
+        { "type": "text", "text": "The largest drop happens after first use.", "style": "body" }
+      ]
+    },
+    {
+      "id": "slide-03",
+      "role": "decision",
+      "claim": "Focus the next release on activation.",
+      "layout": "matrix",
+      "elements": [
+        { "type": "text", "text": "What changes next", "style": "title" },
+        {
+          "type": "table",
+          "columns": ["Priority", "Action", "Owner"],
+          "rows": [["1", "Simplify first-run setup", "Product"], ["2", "Guide first success", "Design"]]
+        }
+      ]
+    }
+  ]
+}
